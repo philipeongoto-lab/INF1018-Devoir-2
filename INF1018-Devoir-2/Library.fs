@@ -1,4 +1,4 @@
-﻿namespace INF1018_Devoir_2
+namespace INF1018_Devoir_2
 
 open System
 open System.Collections.Generic
@@ -44,5 +44,57 @@ module Lex =
         let istring = { string = string; index = 0; output = List<LexicalUnit>() }
 
         // Votre code ici.
+
+        while peekChar istring <> None do
+            skipWhitespace istring
+
+            match peekChar istring with
+            | Some 'A' ->
+                istring.output.Add(Var A)
+                incIndex istring
+
+            | Some 'B' ->
+                istring.output.Add(Var B)
+                incIndex istring
+
+            | Some 'C' ->
+                istring.output.Add(Var C)
+                incIndex istring
+
+            | Some '+' ->
+                istring.output.Add(Op Plus)
+                incIndex istring
+
+            | Some '-' ->
+                istring.output.Add(Op Minus)
+                incIndex istring
+
+            | Some '*' ->
+                istring.output.Add(Op Multiply)
+                incIndex istring
+
+            | Some '/' ->
+                istring.output.Add(Op Divide)
+                incIndex istring
+
+            | Some c when Char.IsDigit(c) ->
+                let mutable nombre = ""
+
+                while (peekChar istring |> Option.exists Char.IsDigit) do
+                    match popChar istring with
+                    | Some chiffre ->
+                        nombre <- nombre + string chiffre
+                    | None -> ()
+
+                match Int32.TryParse(nombre) with
+                | true, valeur ->
+                    istring.output.Add(Int valeur)
+                | false, _ ->
+                    failwith "Entier invalide"
+
+            | Some _ ->
+                failwith "Caractere invalide"
+
+            | None -> ()
 
         istring.output |> List.ofSeq
